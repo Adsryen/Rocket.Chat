@@ -1,18 +1,21 @@
-import { IEmailInbox } from '@rocket.chat/core-typings';
+import type { IEmailInbox } from '@rocket.chat/core-typings';
 import { States, StatesIcon, StatesTitle } from '@rocket.chat/fuselage';
 import { useTranslation, useEndpoint } from '@rocket.chat/ui-contexts';
 import { useQuery } from '@tanstack/react-query';
-import React, { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
-import { FormSkeleton } from '../../../components/Skeleton';
 import EmailInboxForm from './EmailInboxForm';
+import { FormSkeleton } from '../../../components/Skeleton';
 
 const EmailInboxFormWithData = ({ id }: { id: IEmailInbox['_id'] }): ReactElement => {
 	const t = useTranslation();
-	const getEmailInboxById = useEndpoint('GET', `/v1/email-inbox/${id}`);
-	const { data, isLoading, error } = useQuery(['email-inbox/:_id'], () => getEmailInboxById());
+	const getEmailInboxById = useEndpoint('GET', '/v1/email-inbox/:_id', { _id: id });
+	const { data, isPending, error } = useQuery({
+		queryKey: ['email-inbox', id],
+		queryFn: () => getEmailInboxById(),
+	});
 
-	if (isLoading) {
+	if (isPending) {
 		return <FormSkeleton />;
 	}
 

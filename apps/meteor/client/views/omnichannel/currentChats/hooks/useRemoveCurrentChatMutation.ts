@@ -1,6 +1,7 @@
-import { IRoom } from '@rocket.chat/core-typings';
+import type { IRoom } from '@rocket.chat/core-typings';
 import { useMethod } from '@rocket.chat/ui-contexts';
-import { useQueryClient, useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import type { UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 export const useRemoveCurrentChatMutation = (
 	options?: Omit<UseMutationOptions<void, Error, IRoom['_id']>, 'mutationFn'>,
@@ -8,10 +9,14 @@ export const useRemoveCurrentChatMutation = (
 	const removeRoom = useMethod('livechat:removeRoom');
 	const queryClient = useQueryClient();
 
-	return useMutation((rid) => removeRoom(rid), {
+	return useMutation({
+		mutationFn: (rid) => removeRoom(rid),
 		...options,
+
 		onSuccess: (...args) => {
-			queryClient.invalidateQueries(['current-chats']);
+			queryClient.invalidateQueries({
+				queryKey: ['current-chats'],
+			});
 			options?.onSuccess?.(...args);
 		},
 	});

@@ -1,23 +1,17 @@
-import { IRoom, ISubscription } from '@rocket.chat/core-typings';
+import type { IRoom, ISubscription } from '@rocket.chat/core-typings';
 import { SidebarSection } from '@rocket.chat/fuselage';
-import { useTranslation } from '@rocket.chat/ui-contexts';
-import React, { ComponentType, memo, useMemo, ReactElement } from 'react';
+import { useVideoConfAcceptCall, useVideoConfRejectIncomingCall, useVideoConfIncomingCalls } from '@rocket.chat/ui-video-conf';
+import type { TFunction } from 'i18next';
+import type { ReactElement } from 'react';
+import { memo, useMemo } from 'react';
 
-import { useVideoConfAcceptCall, useVideoConfRejectIncomingCall, useVideoConfIncomingCalls } from '../../contexts/VideoConfContext';
-import { useAvatarTemplate } from '../hooks/useAvatarTemplate';
-import { useTemplateByViewMode } from '../hooks/useTemplateByViewMode';
-import OmnichannelSection from '../sections/OmnichannelSection';
 import SideBarItemTemplateWithData from './SideBarItemTemplateWithData';
-
-const sections: {
-	[key: string]: ComponentType<any>;
-} = {
-	Omnichannel: OmnichannelSection,
-};
+import type { useAvatarTemplate } from '../hooks/useAvatarTemplate';
+import type { useTemplateByViewMode } from '../hooks/useTemplateByViewMode';
 
 type RoomListRowProps = {
 	extended: boolean;
-	t: ReturnType<typeof useTranslation>;
+	t: TFunction;
 	SideBarItemTemplate: ReturnType<typeof useTemplateByViewMode>;
 	AvatarTemplate: ReturnType<typeof useAvatarTemplate>;
 	openedRoom: string;
@@ -43,11 +37,8 @@ const RoomListRow = ({ data, item }: { data: RoomListRowProps; item: ISubscripti
 	);
 
 	if (typeof item === 'string') {
-		const Section = sections[item];
-		return Section ? (
-			<Section aria-level='1' />
-		) : (
-			<SidebarSection aria-level='1'>
+		return (
+			<SidebarSection>
 				<SidebarSection.Title>{t(item)}</SidebarSection.Title>
 			</SidebarSection>
 		);
